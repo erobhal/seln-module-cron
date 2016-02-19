@@ -2,13 +2,27 @@ require 'spec_helper'
 describe 'cron' do
 
   platforms = {
-    'RedHat' =>
+    'RedHat 5' =>
+      {
+        :osfamily     => 'RedHat',
+        :osrelease    => '5.5',
+        :package_name => 'crontabs',
+        :service_name => 'crond',
+      },
+    'RedHat 6' =>
       {
         :osfamily     => 'RedHat',
         :package_name => 'crontabs',
         :service_name => 'crond',
       },
-    'Suse' =>
+    'Suse 10' =>
+      {
+        :osfamily     => 'Suse',
+        :osrelease    => '10.4',
+        :package_name => 'cron',
+        :service_name => 'cron',
+      },
+    'Suse 11' =>
       {
         :osfamily     => 'Suse',
         :package_name => 'cron',
@@ -47,6 +61,22 @@ describe 'cron' do
             'require' => "Package[#{v[:package_name]}]",
           })
         }
+      end
+
+      it { should contain_package(v[:package_name]) }
+      it { should contain_service('cron').with_name("#{v[:service_name]}") }
+      it {
+        should contain_file('crontab').with({
+          'ensure'  => 'present',
+          'path'    => '/etc/crontab',
+          'owner'   => 'root',
+          'group'   => 'root',
+          'mode'    => '0644',
+          'content' => File.read(fixtures("default_crontab-#{v[:osfamily]}-#{v[:osrelease]}")),
+        })
+      }
+    end
+  end
 
         it {
           should contain_file('cron_deny').with({
