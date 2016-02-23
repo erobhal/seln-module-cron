@@ -2,27 +2,13 @@ require 'spec_helper'
 describe 'cron' do
 
   platforms = {
-    'RedHat 5' =>
-      {
-        :osfamily     => 'RedHat',
-        :osrelease    => '5.5',
-        :package_name => 'crontabs',
-        :service_name => 'crond',
-      },
-    'RedHat 6' =>
+    'RedHat' =>
       {
         :osfamily     => 'RedHat',
         :package_name => 'crontabs',
         :service_name => 'crond',
       },
-    'Suse 10' =>
-      {
-        :osfamily     => 'Suse',
-        :osrelease    => '10.4',
-        :package_name => 'cron',
-        :service_name => 'cron',
-      },
-    'Suse 11' =>
+    'Suse' =>
       {
         :osfamily     => 'Suse',
         :package_name => 'cron',
@@ -61,22 +47,6 @@ describe 'cron' do
             'require' => "Package[#{v[:package_name]}]",
           })
         }
-      end
-
-      it { should contain_package(v[:package_name]) }
-      it { should contain_service('cron').with_name("#{v[:service_name]}") }
-      it {
-        should contain_file('crontab').with({
-          'ensure'  => 'present',
-          'path'    => '/etc/crontab',
-          'owner'   => 'root',
-          'group'   => 'root',
-          'mode'    => '0644',
-          'content' => File.read(fixtures("default_crontab-#{v[:osfamily]}-#{v[:osrelease]}")),
-        })
-      }
-    end
-  end
 
         it {
           should contain_file('cron_deny').with({
@@ -119,6 +89,92 @@ describe 'cron' do
 
       end
     end
+
+    context "crontab on RedHat 5" do
+      let :facts do
+        {
+          :osfamily                  => 'RedHat',
+          :operatingsystemrelease    => '5.5',
+        }
+      end
+      it {
+        should contain_file('crontab').with({
+          'content' => File.read(fixtures("default_crontab-RedHat-5.5")),
+        })
+      }
+    end
+
+    context "crontab on RedHat 6" do
+      let :facts do
+        {
+          :osfamily                  => 'RedHat',
+          :operatingsystemrelease    => '6.7',
+        }
+      end
+      it {
+        should contain_file('crontab').with({
+          'content' => File.read(fixtures("default_crontab-RedHat-6.7")),
+        })
+      }
+    end
+
+    context "crontab on RedHat 7" do
+      let :facts do
+        {
+          :osfamily                  => 'RedHat',
+          :operatingsystemrelease    => '7.1',
+        }
+      end
+      it {
+        should contain_file('crontab').with({
+          'content' => File.read(fixtures("default_crontab-RedHat-7.1")),
+        })
+      }
+    end
+
+    context "crontab on Suse 10" do
+      let :facts do
+        {
+          :osfamily                  => 'Suse',
+          :operatingsystemrelease    => '10.4',
+        }
+      end
+      it {
+        should contain_file('crontab').with({
+          'content' => File.read(fixtures("default_crontab-Suse-10.4")),
+        })
+      }
+    end
+
+    context "crontab on Suse 11" do
+      let :facts do
+        {
+          :osfamily                  => 'Suse',
+          :operatingsystemrelease    => '11.3',
+        }
+      end
+      it {
+        should contain_file('crontab').with({
+          'content' => File.read(fixtures("default_crontab-Suse-11.3")),
+        })
+      }
+    end
+
+    context "crontab on Suse 12" do
+      let :facts do
+        {
+          :osfamily                  => 'Suse',
+          :operatingsystemrelease    => '12.1',
+        }
+      end
+      it {
+        should contain_file('crontab').with({
+          'content' => File.read(fixtures("default_crontab-Suse-12.1")),
+        })
+      }
+    end
+
+
   end
 
   describe 'with optional parameters set' do
