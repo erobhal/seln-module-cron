@@ -90,6 +90,31 @@ describe 'cron' do
       end
     end
 
+   describe 'on unsupported platform' do
+     context 'Redhat > 7' do
+     let(:facts) { {
+       :osfamily                  => 'RedHat',
+       :operatingsystemmajrelease => '8',
+     } }
+       it 'should fail' do
+         expect {
+           should contain_class('cron')
+         }.to raise_error(Puppet::Error,/This cron module supports Redhat versions up to/)
+       end
+     end
+     context 'SuSE > 11' do
+     let(:facts) { {
+       :osfamily                  => 'Suse',
+       :lsbmajdistrelease         => '13',
+     } }
+       it 'should fail' do
+         expect {
+           should contain_class('cron')
+         }.to raise_error(Puppet::Error,/This cron module supports SuSE versions up to/)
+       end
+     end
+   end
+
     context "crontab on RedHat 5" do
       let :facts do
         {

@@ -34,6 +34,15 @@ class cron (
     }
   }
 
+  # Template is missing templates defaults for OS later than RH7 and SLE12
+  if $::osfamily == 'RedHat' and $::operatingsystemmajrelease != undef and $::operatingsystemmajrelease > 7 {
+    fail("This cron module supports Redhat versions up to 7. Detected version is <${::operatingsystemmajrelease}>.")
+  }
+  if $::osfamily == 'SuSE' and $::lsbmajdistrelease != undef and $::lsbmajdistrelease > 12 {
+    fail("This cron module supports SuSE versions up to 12. Detected version is <${::lsbmajdistrelease}>.")
+  }
+
+
   # Validation
   validate_re($ensure_state, '^(running)|(stopped)$', "cron::ensure_state is ${ensure_state} and must be running or stopped")
   validate_re($package_ensure, '^(present)|(absent)$', "cron::package_ensure is ${package_ensure} and must be absent or present")
