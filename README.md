@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/erobhal/seln-module-cron.svg?branch=master)](https://travis-ci.org/erobhal/seln-module-cron)
+
 # puppet-module-cron
 
 Manage the cron configuration files :
